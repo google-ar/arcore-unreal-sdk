@@ -25,7 +25,6 @@ public class HelloARUnreal : ModuleRules
 		PrivateDependencyModuleNames.AddRange(new string[] {
 			"GoogleARCoreBase",
 			"ProceduralMeshComponent",
-			"TangoSDK"
 		});
 
 		// Uncomment if you are using Slate UI

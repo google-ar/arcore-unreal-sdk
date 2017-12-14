@@ -16,7 +16,7 @@
 #include "ProceduralMeshComponent.h"
 #include "Components/InstancedStaticMeshComponent.h"
 
-#include "GoogleARCorePlane.h"
+#include "GoogleARCoreTypes.h"
 
 // Sets default values
 AARPlaneActor::AARPlaneActor()
@@ -32,18 +32,15 @@ AARPlaneActor::AARPlaneActor()
 // Called every frame
 void AARPlaneActor::Tick(float DeltaTime)
 {
-	// No need to tick when the plane isn't assigned or hasn't been updated.
-	if (IsValid(ARCorePlaneObject) && ARCorePlaneObject->IsUpdated())
-	{
-		UpdatePlanePolygonMesh();
-	}
 	Super::Tick(DeltaTime);
+	PlanePolygonMeshComponent->SetWorldTransform(ARCorePlaneObject->GetCenterPose());
 }
 
 void AARPlaneActor::UpdatePlanePolygonMesh()
 {
 	// Update polygon mesh vertex indices, using triangle fan due to its convex.
-	const TArray<FVector>& BoundaryVertices = ARCorePlaneObject->GetWorldSpaceBoundaryPolygon();
+	TArray<FVector> BoundaryVertices;
+	ARCorePlaneObject->GetBoundaryPolygonInLocalSpace(BoundaryVertices);
 	int BoundaryVerticesNum = BoundaryVertices.Num();
 
 	if (BoundaryVerticesNum < 3)
@@ -66,16 +63,13 @@ void AARPlaneActor::UpdatePlanePolygonMesh()
 	PolygonMeshIndices.Empty(TriangleNum * 3);
 	PolygonMeshNormals.Empty(PolygonMeshVerticesNum);
 
-	// Generate vertex data
-	// Revisit here to see if we want to calculate in local space
-	FVector BoundaryCenter = ARCorePlaneObject->GetBoundingBoxWorldTransform().GetLocation();
-	FVector PlaneNormal = ARCorePlaneObject->GetPlane().GetSafeNormal();
+	FVector PlaneNormal = ARCorePlaneObject->GetFPlane().GetSafeNormal();
 	for (int i = 0; i < BoundaryVerticesNum; i++)
 	{
 		FVector BoundaryPoint = BoundaryVertices[i];
-		float BoundaryToCenterDist = FVector::Dist(BoundaryPoint, BoundaryCenter);
+		float BoundaryToCenterDist = BoundaryPoint.Size();
 		float FeatheringDist = FMath::Min(BoundaryToCenterDist, EdgeFeatheringDistance);
-		FVector InteriorPoint = BoundaryPoint + (BoundaryCenter - BoundaryPoint).GetUnsafeNormal() * FeatheringDist;
+		FVector InteriorPoint = BoundaryPoint - BoundaryPoint.GetUnsafeNormal() * FeatheringDist;
 
 		PolygonMeshVertices.Add(BoundaryPoint);
 		PolygonMeshVertices.Add(InteriorPoint);

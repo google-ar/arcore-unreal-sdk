@@ -40,11 +40,12 @@ public:
 	UPROPERTY(Category = GoogleARCorePlaneActor, EditAnywhere, BlueprintReadWrite)
 	float EdgeFeatheringDistance = 10.0f;
 
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-private:
+	UFUNCTION(BlueprintCallable, Category = "GoogleARCore|PlaneActor", meta = (Keywords = "googlear arcore plane"))
 	void UpdatePlanePolygonMesh();
 
 };
