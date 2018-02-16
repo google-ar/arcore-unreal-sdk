@@ -32,7 +32,7 @@ public:
 	UPROPERTY(Category = GoogleARCorePlaneActor, EditAnywhere, BlueprintReadWrite)
 	class UProceduralMeshComponent* PlanePolygonMeshComponent;
 
-	/** When set to true, the actor will remove the ARAnchor object from the current tracking session when the Actor gets destroyed.*/
+	/** The GoogleARCorePlane object this actor represents.*/
 	UPROPERTY(Category = GoogleARCorePlaneActor, BlueprintReadWrite)
 	class UGoogleARCorePlane* ARCorePlaneObject = nullptr;
 
