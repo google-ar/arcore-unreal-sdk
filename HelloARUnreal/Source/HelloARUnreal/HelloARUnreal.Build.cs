@@ -23,7 +23,7 @@ public class HelloARUnreal : ModuleRules
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {
-			"GoogleARCoreBase",
+			"AugmentedReality",
 			"ProceduralMeshComponent",
 		});
 

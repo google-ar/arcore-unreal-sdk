@@ -16,6 +16,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "ARTrackable.h"
 
 #include "ARPlaneActor.generated.h"
 
@@ -32,9 +33,9 @@ public:
 	UPROPERTY(Category = GoogleARCorePlaneActor, EditAnywhere, BlueprintReadWrite)
 	class UProceduralMeshComponent* PlanePolygonMeshComponent;
 
-	/** The GoogleARCorePlane object this actor represents.*/
+	/** When set to true, the actor will remove the ARAnchor object from the current tracking session when the Actor gets destroyed.*/
 	UPROPERTY(Category = GoogleARCorePlaneActor, BlueprintReadWrite)
-	class UGoogleARCorePlane* ARCorePlaneObject = nullptr;
+	class UARPlaneGeometry* ARCorePlaneObject = nullptr;
 
 	/** The feathering distance for the polygon edge. Default to 10 cm*/
 	UPROPERTY(Category = GoogleARCorePlaneActor, EditAnywhere, BlueprintReadWrite)
@@ -45,7 +46,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(BlueprintCallable, Category = "GoogleARCore|PlaneActor", meta = (Keywords = "googlear arcore plane"))
+	UFUNCTION(BlueprintCallable, Category = "GoogleARCorePlaneActor", meta = (Keywords = "googlear arcore plane"))
 	void UpdatePlanePolygonMesh();
 
 };

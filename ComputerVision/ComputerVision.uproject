@@ -1,0 +1,19 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "{687313F1-4017-732B-F093-63B4DA844176}",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "ComputerVision",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "GoogleARCore",
+			"Enabled": true
+		}
+	]
+}

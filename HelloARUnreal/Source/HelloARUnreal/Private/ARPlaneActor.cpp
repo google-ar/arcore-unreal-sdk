@@ -16,8 +16,6 @@
 #include "ProceduralMeshComponent.h"
 #include "Components/InstancedStaticMeshComponent.h"
 
-#include "GoogleARCoreTypes.h"
-
 // Sets default values
 AARPlaneActor::AARPlaneActor()
 {
@@ -33,14 +31,14 @@ AARPlaneActor::AARPlaneActor()
 void AARPlaneActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	PlanePolygonMeshComponent->SetWorldTransform(ARCorePlaneObject->GetCenterPose());
+	PlanePolygonMeshComponent->SetWorldTransform(ARCorePlaneObject->GetLocalToWorldTransform());
 }
 
 void AARPlaneActor::UpdatePlanePolygonMesh()
 {
 	// Update polygon mesh vertex indices, using triangle fan due to its convex.
 	TArray<FVector> BoundaryVertices;
-	ARCorePlaneObject->GetBoundaryPolygonInLocalSpace(BoundaryVertices);
+	BoundaryVertices = ARCorePlaneObject->GetBoundaryPolygonInLocalSpace();
 	int BoundaryVerticesNum = BoundaryVertices.Num();
 
 	if (BoundaryVerticesNum < 3)
@@ -63,7 +61,7 @@ void AARPlaneActor::UpdatePlanePolygonMesh()
 	PolygonMeshIndices.Empty(TriangleNum * 3);
 	PolygonMeshNormals.Empty(PolygonMeshVerticesNum);
 
-	FVector PlaneNormal = ARCorePlaneObject->GetFPlane().GetSafeNormal();
+	FVector PlaneNormal = ARCorePlaneObject->GetLocalToWorldTransform().GetRotation().GetUpVector();
 	for (int i = 0; i < BoundaryVerticesNum; i++)
 	{
 		FVector BoundaryPoint = BoundaryVertices[i];
