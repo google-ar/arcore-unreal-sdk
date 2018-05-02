@@ -49,7 +49,10 @@
 **/Build/*
 
 # Don't ignore Android/res folder in Build
+!**/Build/Android/
+**/Build/Android/*
 !**/Build/Android/res
+
 
 # Don't ignore icon files in Build
 !**/Build/**/*.ico

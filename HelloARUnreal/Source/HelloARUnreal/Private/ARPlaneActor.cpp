@@ -55,11 +55,13 @@ void AARPlaneActor::UpdatePlanePolygonMesh()
 	TArray<FLinearColor> PolygonMeshVertexColors;
 	TArray<int> PolygonMeshIndices;
 	TArray<FVector> PolygonMeshNormals;
+	TArray<FVector2D> PolygonMeshUVs;
 
 	PolygonMeshVertices.Empty(PolygonMeshVerticesNum);
 	PolygonMeshVertexColors.Empty(PolygonMeshVerticesNum);
 	PolygonMeshIndices.Empty(TriangleNum * 3);
 	PolygonMeshNormals.Empty(PolygonMeshVerticesNum);
+
 
 	FVector PlaneNormal = ARCorePlaneObject->GetLocalToWorldTransform().GetRotation().GetUpVector();
 	for (int i = 0; i < BoundaryVerticesNum; i++)
@@ -72,11 +74,15 @@ void AARPlaneActor::UpdatePlanePolygonMesh()
 		PolygonMeshVertices.Add(BoundaryPoint);
 		PolygonMeshVertices.Add(InteriorPoint);
 
+		PolygonMeshUVs.Add(FVector2D(BoundaryPoint.X, BoundaryPoint.Y));
+		PolygonMeshUVs.Add(FVector2D(InteriorPoint.X, InteriorPoint.Y));
+
 		PolygonMeshNormals.Add(PlaneNormal);
 		PolygonMeshNormals.Add(PlaneNormal);
 
 		PolygonMeshVertexColors.Add(FLinearColor(0.0f, 0.f, 0.f, 0.f));
 		PolygonMeshVertexColors.Add(FLinearColor(0.0f, 0.f, 0.f, 1.f));
+
 	}
 
 	// Generate triangle indices
@@ -111,5 +117,5 @@ void AARPlaneActor::UpdatePlanePolygonMesh()
 	}
 
 	// No need to fill uv and tangent;
-	PlanePolygonMeshComponent->CreateMeshSection_LinearColor(0, PolygonMeshVertices, PolygonMeshIndices, PolygonMeshNormals, TArray<FVector2D>(), PolygonMeshVertexColors, TArray<FProcMeshTangent>(), false);
+	PlanePolygonMeshComponent->CreateMeshSection_LinearColor(0, PolygonMeshVertices, PolygonMeshIndices, PolygonMeshNormals, PolygonMeshUVs, PolygonMeshVertexColors, TArray<FProcMeshTangent>(), false);
 }
