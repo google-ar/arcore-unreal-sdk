@@ -94,7 +94,7 @@ EGoogleARCoreFunctionStatus AGoogleARCoreEdgeDetector::UpdateCameraImage()
 	int32_t Height = CameraImage->GetHeight();
 	int32_t planeCount = CameraImage->GetPlaneCount();
 
-	if (!CameraImageTexture)
+	if (!CameraImageTexture || CameraImageTexture->GetSizeX() != Width || CameraImageTexture->GetSizeY() != Height)
 	{
 		CameraImageTexture = UTexture2D::CreateTransient(Width, Height);
 		CameraImageTexture->UpdateResource();
@@ -141,7 +141,7 @@ EGoogleARCoreFunctionStatus AGoogleARCoreEdgeDetector::UpdateCameraImage()
 		};
 
 	CameraImageTexture->UpdateTextureRegions(
-		0, 1, Region, 640 * 4, 4,
+		0, 1, Region, Width * 4, 4,
 		reinterpret_cast<uint8_t*>(TempRGBABuf),
 		CleanupData);
 
