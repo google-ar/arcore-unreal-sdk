@@ -1,4 +1,16 @@
 // Copyright 2018 Google Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include "EdgeDetector.h"
 
@@ -9,68 +21,63 @@
 
 #include "TransformCalculus2D.h"
 
+static const int SobelThreshold = 128 * 128;
 void AGoogleARCoreEdgeDetector::GoogleARCoreDoSobelEdgeDetection(
 	const uint8 *InYPlaneData,
 	uint32 YPlanePixelStride,
 	uint32 YPlaneRowStride,
-	uint32 *OutPixels,
+	uint8 *OutPixels,
 	int32 Width,
 	int32 Height)
 {
-	float XKernel[3][3] = {
-		{ -1.0f, 0.0f, 1.0f },
-		{ -2.0f, 0.0f, 2.0f },
-		{ -1.0f, 0.0f, 1.0f }
+	// We copy the image data here before running the edge detection algorithm.
+	// This is due to on some device(Exynos S8), accessing the original image
+	// buffer is extremely slow.
+	TArray<uint8> YPlaneDataCopy(InYPlaneData, YPlaneRowStride * Height);
+
+	int XKernel[3][3] = {
+		{ -1, 0, 1 },
+		{ -2, 0, 2 },
+		{ -1, 0, 1 }
 	};
 
-	float YKernel[3][3] = {
-		{ -1.0f, -2.0f, -1.0f },
-		{  0.0f,  0.0f,  0.0f },
-		{  1.0f,  2.0f,  1.0f }
+	int YKernel[3][3] = {
+		{ -1, -2, -1 },
+		{ 0,  0,  0 },
+		{ 1,  2,  1 }
 	};
 
-	for(int32 y = 0; y < Height; y++)
+	for (int32 y = 0; y < Height; y++)
 	{
-		for(int32 x = 0; x < Width; x++)
+		for (int32 x = 0; x < Width; x++)
 		{
-			float XMag = 0.0f;
-			float YMag = 0.0f;
+			int XMag = 0;
+			int YMag = 0;
 
-			for(int32 u = 0; u < 3; u++)
+			for (int32 u = 0; u < 3; u++)
 			{
-				for(int32 v = 0; v < 3; v++)
+				for (int32 v = 0; v < 3; v++)
 				{
 					int32 u2 = x + u - 1;
 					int32 v2 = y + v - 1;
 
-					if(u2 < 0) u2 = 0;
-					if(u2 >= Width) u2 = Width - 1;
-					if(v2 < 0) v2 = 0;
-					if(v2 >= Height) v2 = Height - 1;
+					if (u2 < 0) u2 = 0;
+					if (u2 >= Width) u2 = Width - 1;
+					if (v2 < 0) v2 = 0;
+					if (v2 >= Height) v2 = Height - 1;
 
-					const uint8 *SourcePixel =
-						&InYPlaneData[
-							u2 * YPlanePixelStride +
+					uint8 SourcePixel = YPlaneDataCopy[
+						u2 * YPlanePixelStride +
 							v2 * YPlaneRowStride];
 
-					float Value = float(*SourcePixel) / 256.0f;
-
-					XMag += Value * XKernel[u][v];
-					YMag += Value * YKernel[u][v];
+					XMag += SourcePixel * XKernel[u][v];
+					YMag += SourcePixel * YKernel[u][v];
 				}
 			}
 
-			float Magnitude =
-				sqrt(XMag * XMag + YMag * YMag);
-			int32_t MagnitudeInt = int32_t(Magnitude * 255);
-			if(MagnitudeInt > 255) MagnitudeInt = 255;
-			if(MagnitudeInt < 0) MagnitudeInt = 0;
-
-			OutPixels[y * Width + x] =
-				MagnitudeInt |
-				(MagnitudeInt << 8) |
-				(MagnitudeInt << 16) |
-				(MagnitudeInt << 24);
+			int Magnitude = XMag * XMag + YMag * YMag;
+			uint8 Output = Magnitude > SobelThreshold ? 0xFF : 0x1F;
+			OutPixels[y * Width + x] = Output;
 		}
 	}
 }
@@ -96,11 +103,11 @@ EGoogleARCoreFunctionStatus AGoogleARCoreEdgeDetector::UpdateCameraImage()
 
 	if (!CameraImageTexture || CameraImageTexture->GetSizeX() != Width || CameraImageTexture->GetSizeY() != Height)
 	{
-		CameraImageTexture = UTexture2D::CreateTransient(Width, Height);
+		CameraImageTexture = UTexture2D::CreateTransient(Width, Height, EPixelFormat::PF_G8);
 		CameraImageTexture->UpdateResource();
 	}
 
-	uint32_t *TempRGBABuf = new uint32_t[Width * Height];
+	uint8_t *TempRGBABuf = new uint8_t[Width * Height];
 
 	// Y
 	int32_t y_xStride = 0;
@@ -141,7 +148,7 @@ EGoogleARCoreFunctionStatus AGoogleARCoreEdgeDetector::UpdateCameraImage()
 		};
 
 	CameraImageTexture->UpdateTextureRegions(
-		0, 1, Region, Width * 4, 4,
+		0, 1, Region, Width, 1,
 		reinterpret_cast<uint8_t*>(TempRGBABuf),
 		CleanupData);
 
@@ -200,5 +207,3 @@ void AGoogleARCoreEdgeDetector::GetTransformedCameraImageUV(TArray<float>& OutUV
 	// Transform the cropped UV.
 	UGoogleARCoreSessionFunctionLibrary::GetPassthroughCameraImageUV(CroppedUV, OutUV);
 }
-
-

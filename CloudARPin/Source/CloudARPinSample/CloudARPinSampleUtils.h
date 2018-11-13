@@ -16,6 +16,7 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "FindSessionsCallbackProxy.h"
 
 #include "CloudARPinSampleUtils.generated.h"
 
@@ -27,4 +28,10 @@ class CLOUDARPINSAMPLE_API UCloudARPinSampleUtils : public UBlueprintFunctionLib
 public:
 	UFUNCTION(BlueprintCallable, Category = "UCloudARPinSampleUtils")
 	static FString GetLocalHostIPAddress();
+
+	UFUNCTION(BlueprintPure, Category = "UCloudARPinSampleUtils")
+	static FString GetSessionId(const FBlueprintSessionResult& Result);
+
+	UFUNCTION(BlueprintPure, Category = "UCloudARPinSampleUtils", meta = (WorldContext = "WorldContextObject"))
+	static FString GetHostSessionId(UObject* WorldContextObject);
 };

@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{1BC1E424-0D0A-0D18-000E-02832A398E62}",
+	"EngineAssociation": "{D8C09841-4A56-7D95-C577-5D8344D23714}",
 	"Category": "",
 	"Description": "",
 	"Plugins": [
@@ -10,7 +10,7 @@
 		},
 		{
 			"Name": "AppleARKit",
-			"Enabled": false
+			"Enabled": true
 		},
 		{
 			"Name": "GoogleARCore",

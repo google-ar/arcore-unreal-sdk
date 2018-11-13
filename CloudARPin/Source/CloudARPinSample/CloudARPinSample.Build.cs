@@ -26,6 +26,11 @@ public class CloudARPinSample : ModuleRules
 			"Sockets",
 			"AugmentedReality",
 			"ProceduralMeshComponent",
+			"OnlineSubsystem",
+			"OnlineSubsystemUtils",
+			"AugmentedReality",
+			"GoogleARCoreBase",
+			"AppleARKit"
 		});
 
 		// Uncomment if you are using Slate UI

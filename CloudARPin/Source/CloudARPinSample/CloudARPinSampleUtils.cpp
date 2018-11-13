@@ -15,6 +15,8 @@
 #include "CloudARPinSampleUtils.h"
 #include "SocketSubsystem.h"
 #include "IPAddress.h"
+#include "OnlineSubsystemUtils.h"
+#include "Engine.h"
 
 FString UCloudARPinSampleUtils::GetLocalHostIPAddress()
 {
@@ -25,4 +27,22 @@ FString UCloudARPinSampleUtils::GetLocalHostIPAddress()
 		return LocalIp->ToString(false);
 	}
 	return FString("");
+}
+
+FString UCloudARPinSampleUtils::GetSessionId(const FBlueprintSessionResult& Result)
+{
+	return Result.OnlineResult.Session.OwningUserName.Right(5);
+}
+
+FString UCloudARPinSampleUtils::GetHostSessionId(UObject* WorldContextObject)
+{
+	IOnlineSubsystem* OnlineSubsystem = Online::GetSubsystem(GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull));
+	auto Sessions = OnlineSubsystem->GetSessionInterface();
+	auto Session = Sessions->GetNamedSession(NAME_GameSession);
+	if (Session != nullptr)
+	{
+		return Session->OwningUserName.Right(5);
+	}
+
+	return "";
 }
