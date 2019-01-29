@@ -128,6 +128,7 @@ void AARPlaneRenderer::UpdatePlaneMesh(UARPlaneGeometry* ARCorePlaneObject, UPro
 	TArray<FLinearColor> PolygonMeshVertexColors;
 	TArray<int> PolygonMeshIndices;
 	TArray<FVector> PolygonMeshNormals;
+	TArray<FVector2D> PolygonMeshUVs;
 
 	PolygonMeshVertices.Empty(PolygonMeshVerticesNum);
 	PolygonMeshVertexColors.Empty(PolygonMeshVerticesNum);
@@ -144,6 +145,9 @@ void AARPlaneRenderer::UpdatePlaneMesh(UARPlaneGeometry* ARCorePlaneObject, UPro
 
 		PolygonMeshVertices.Add(BoundaryPoint);
 		PolygonMeshVertices.Add(InteriorPoint);
+
+		PolygonMeshUVs.Add(FVector2D(BoundaryPoint.X, BoundaryPoint.Y));
+		PolygonMeshUVs.Add(FVector2D(InteriorPoint.X, InteriorPoint.Y));
 
 		PolygonMeshNormals.Add(PlaneNormal);
 		PolygonMeshNormals.Add(PlaneNormal);
@@ -184,7 +188,7 @@ void AARPlaneRenderer::UpdatePlaneMesh(UARPlaneGeometry* ARCorePlaneObject, UPro
 	}
 
 	// No need to fill uv and tangent;
-	PlanePolygonMeshComponent->CreateMeshSection_LinearColor(0, PolygonMeshVertices, PolygonMeshIndices, PolygonMeshNormals, TArray<FVector2D>(), PolygonMeshVertexColors, TArray<FProcMeshTangent>(), false);
+	PlanePolygonMeshComponent->CreateMeshSection_LinearColor(0, PolygonMeshVertices, PolygonMeshIndices, PolygonMeshNormals, PolygonMeshUVs, PolygonMeshVertexColors, TArray<FProcMeshTangent>(), false);
 
 	// Set the component transform to Plane's transform.
 	PlanePolygonMeshComponent->SetWorldTransform(ARCorePlaneObject->GetLocalToWorldTransform());

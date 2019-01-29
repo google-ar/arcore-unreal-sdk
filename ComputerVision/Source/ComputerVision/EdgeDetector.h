@@ -46,12 +46,6 @@ public:
 	UTexture2D *GetCameraImage();
 
 	/**
-	 * Generate the texture coordinates that matches the camera image with the passthrough image aspect ratio and rotation.
-	 */
-	UFUNCTION(BlueprintPure, Category = "GoogleARCoreSample|EdgeDetector", meta = (Keywords = "googlear arcore edgedetector"))
-	void GetTransformedCameraImageUV(TArray<float>& OutUV);
-
-	/**
 	 * The generated camera texture.
 	 */
 	UPROPERTY()
