@@ -5,6 +5,11 @@ Copyright (c) 2017 Google Inc.  All rights reserved.
 This SDK provides native APIs for all of the essential AR features like motion tracking, environmental understanding, and light estimation. With these capabilities you can build entirely new AR experiences or enhance existing apps with AR features.
 
 
+## SDK Status
+
+**Caution**: This repository is no longer up to date. See instead the Unreal Engine's latest [Google ARCore](https://docs.unrealengine.com/SharingAndReleasing/XRDevelopment/AR/GoogleArcore/) documentation.
+
+
 ## Quick Start
 
 To build ARCore apps with Unreal Engine, you must use a version of Unreal Engine with _GoogleARCore plugin_ integrated. For more information, see the [Getting Started with Unreal](//developers.google.com/ar/develop/unreal/getting-started) developer guide.
