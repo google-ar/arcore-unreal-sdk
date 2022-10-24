@@ -39,3 +39,6 @@ adding the following text on your main menu or notice screen: "This application
 runs on [ARCore](//play.google.com/store/apps/details?id=com.google.ar.core),
 which is provided by Google LLC and governed by the
 [Google Privacy Policy](//policies.google.com/privacy)".
+
+Review all [User privacy requirements](https://developers.google.com/ar/develop/privacy-requirements#cloud-anchors-privacy-requirements)
+in the [ARCore documentation](https://developers.google.com/ar/develop).
